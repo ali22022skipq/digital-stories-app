@@ -24,21 +24,23 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true }
+    // cookie: { secure: true },
+    authorization: {
+        accessToken: null,
+        username: null
+    }
 }));
 
 app.use("/auth/*", (req, res, next) =>{
-    const token = req.body.accessToken;
-    if (token){
+    if (req.session.authorization){
         try{
-            const data = jwt.verify(token, process.env.SECRET);
-            console.log(data);
+            const data = jwt.verify(req.session.authorization['accessToken'], process.env.SECRET);
             next();
         } catch (err){
             return res.status(404).json({error: err});
         }
     } else{
-        return res.status(404).json({message: "User not Authenticated"});
+        return res.status(404).json({message: "User not Logged in"});
     }
 })
 app.use("/", public);
