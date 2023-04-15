@@ -1,9 +1,10 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
-const User = require("../models/User")
+const dotenv = require("dotenv");
+const User = require("../models/User");
 const router = express.Router();
+dotenv.config();
 
 router.post("/register", async(req, res)=>{
     console.log(req.body);
@@ -17,7 +18,7 @@ router.post("/register", async(req, res)=>{
         const savedUser = await user.save();
         res.json(savedUser);    
     }catch(err){
-        res.json({message:err});
+        res.json({err:err});
     }   
 });
 
@@ -33,7 +34,7 @@ router.post("/login", async (req, res)=>{
     let accessToken = null;
     
     if (passMatch){
-        accessToken = jwt.sign({payload:{"username":username, "email":email, "password":hash}}, 'MERA_SECRET', {expiresIn:60});
+        accessToken = jwt.sign({payload:{"username":username, "email":email, "password":hash}}, process.env.SECRET, {expiresIn:3600});
         req.session.authorization = {
             accessToken, username
         };

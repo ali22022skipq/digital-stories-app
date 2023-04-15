@@ -21,7 +21,7 @@ app.use(cors({
 }));
 
 app.use(session({
-    secret: 'MERA_SECRET',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: { secure: true }
@@ -31,7 +31,7 @@ app.use("/auth/*", (req, res, next) =>{
     const token = req.body.accessToken;
     if (token){
         try{
-            const data = jwt.verify(token, "MERA_SECRET")
+            const data = jwt.verify(token, process.env.SECRET);
             console.log(data);
             next();
         } catch (err){
