@@ -11,13 +11,17 @@ router.post("/register", async(req, res)=>{
     console.log(req.body);
     const hash = await bcrypt.hash(req.body.password, 10);
     const user = new User({
+        fullname: req.body.fullname,
         username: req.body.username,
         email:    req.body.email,
-        password: hash
-    })
+        password: hash,
+        dateOfBirth: req.body.dateOfBirth,
+        gender: req.body.gender,
+    });
     try{
         const savedUser = await user.save();
         res.json(savedUser);    
+    
     }catch(err){
         res.json({err:err});
     }   
@@ -28,7 +32,7 @@ router.post("/login", async (req, res)=>{
     const password = req.body.password;
     
     if (email && password){
-        const hash = await bcrypt.hash(req.body.password, 10);
+        const hash      = await bcrypt.hash(req.body.password, 10);
         const result    = await User.findOne({email: email});
         const passMatch = await bcrypt.compare(password, result.password);
         
@@ -41,16 +45,10 @@ router.post("/login", async (req, res)=>{
                 username: username
             };
             return res.json({accessToken: accessToken});
-        
         }
-
     } else {
         return res.json({message: "Error logging in"});
     }
 });
-
-router.get("/", (req, res)=>{
-    return res.json(req.session);
-})
 
 module.exports = router;

@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 
 dotenv.config();
-app.use(express.json());
+app.use(express.json());    
 
 const uri = process.env.URI+process.env.DATABASE_NAME+process.env.DB_PARAMS;
 mongoose.connect(uri, {useNewUrlParser: true});
